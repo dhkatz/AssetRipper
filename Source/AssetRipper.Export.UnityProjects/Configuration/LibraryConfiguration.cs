@@ -59,7 +59,7 @@ namespace AssetRipper.Export.UnityProjects.Configuration
 			AudioExportFormat = AudioExportFormat.Default;
 			ImageExportFormat = ImageExportFormat.Png;
 			MeshExportFormat = MeshExportFormat.Native;
-			ScriptExportMode = ScriptExportMode.Hybrid;
+			ScriptExportMode = ScriptExportMode.Decompiled;
 			ScriptLanguageVersion = ScriptLanguageVersion.AutoSafe;
 			ShaderExportMode = ShaderExportMode.Dummy;
 			SpriteExportMode = SpriteExportMode.Yaml;
