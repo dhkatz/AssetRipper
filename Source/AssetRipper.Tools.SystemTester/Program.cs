@@ -11,99 +11,111 @@ namespace AssetRipper.Tools.SystemTester
 
 		static void Main(string[] args)
 		{
-			Logger.Add(new ConsoleLogger(true));
-			Logger.Add(new FileLogger("AssetRipper.Tools.SystemTester.log"));
-			Logger.LogSystemInformation("System Tester");
-			Logger.BlankLine();
+			// Logger.Add(new ConsoleLogger(true));
+			// Logger.Add(new FileLogger("AssetRipper.Tools.SystemTester.log"));
+			// Logger.LogSystemInformation("System Tester");
+			// Logger.BlankLine();
 
 			if (args.Length == 0)
 			{
-				RunTests();
-				Console.ReadLine();
+				// RunTests();
+				// Console.ReadLine();
+				Console.WriteLine("No arguments provided.");
 			}
 			else
 			{
-				Rip(args, Path.Combine(AppContext.BaseDirectory, "Ripped"));
+				var settingsPath = args[0];
+				var outputPath = args[1];
+				var inputPaths = args.Skip(2).ToArray();
+				Console.WriteLine("Ripping...");
+				Console.WriteLine($"- settings: {settingsPath}");
+				Console.WriteLine($"- output: {outputPath}");
+				Console.WriteLine($"- input: {string.Join(", ", inputPaths)}");
+				Rip(inputPaths, outputPath, settingsPath);
+				// Rip(args, Path.Combine(AppContext.BaseDirectory, "Ripped"));
 			}
 		}
 
-		static void RunTests()
+		// static void RunTests()
+		// {
+		// 	if (!Directory.Exists(TestsDirectory))
+		// 	{
+		// 		Logger.Log(LogType.Warning, LogCategory.General, "Tests folder did not exist. Creating...");
+		// 		Directory.CreateDirectory(TestsDirectory);
+		// 		Logger.Info(LogCategory.General, "Created. Program will now exit.");
+		// 		return;
+		// 	}
+		//
+		// 	Logger.Info(LogCategory.General, $"Running tests in {Path.GetFullPath(TestsDirectory)}");
+		// 	Logger.BlankLine();
+		//
+		// 	int numTests = 0;
+		// 	int numSuccessful = 0;
+		// 	List<(string, string)> successfulTests = new();
+		// 	List<(string, string)> unsuccessfulTests = new();
+		// 	foreach (string versionPath in Directory.GetDirectories(TestsDirectory))
+		// 	{
+		// 		string versionName = Path.GetRelativePath(TestsDirectory, versionPath);
+		// 		foreach (string testPath in Directory.GetDirectories(versionPath))
+		// 		{
+		// 			string testName = Path.GetRelativePath(versionPath, testPath);
+		// 			Logger.Info(LogCategory.General, $"Found test: '{testName}' for Unity version: '{versionName}'");
+		// 			numTests++;
+		// 			string inputPath = Path.Combine(testPath, "Input");
+		// 			if (!Directory.Exists(inputPath))
+		// 			{
+		// 				Logger.Log(LogType.Error, LogCategory.General, $"No input folder for '{testName}' on Unity version '{versionName}'");
+		// 				unsuccessfulTests.Add((versionName, testName));
+		// 			}
+		// 			else
+		// 			{
+		// 				try
+		// 				{
+		// 					string[] inputFiles = Directory.GetFiles(inputPath);
+		// 					string[] inputDirectories = Directory.GetDirectories(inputPath);
+		// 					string[] inputPaths = Combine(inputFiles, inputDirectories);
+		// 					string outputPath = Path.Combine(testPath, "Output");
+		// 					Rip(inputPaths, outputPath);
+		// 					Logger.Info(LogCategory.General, $"Completed test: '{testName}' for Unity version: '{versionName}'");
+		// 					Logger.BlankLine(2);
+		// 					numSuccessful++;
+		// 					successfulTests.Add((versionName, testName));
+		// 				}
+		// 				catch (Exception ex)
+		// 				{
+		// 					Logger.Log(LogType.Error, LogCategory.General, ex.ToString());
+		// 					Logger.BlankLine(2);
+		// 					unsuccessfulTests.Add((versionName, testName));
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		//
+		// 	Logger.Info(LogCategory.General, $"{numSuccessful}/{numTests} tests successfully completed");
+		// 	if (numSuccessful > 0)
+		// 	{
+		// 		Logger.Info(LogCategory.General, "Successful:");
+		// 		foreach ((string version, string test) in successfulTests)
+		// 		{
+		// 			Logger.Info(LogCategory.General, $"\t{version,-12} {test}");
+		// 		}
+		// 	}
+		// 	if (numSuccessful < numTests)
+		// 	{
+		// 		Logger.Info(LogCategory.General, "Unsuccessful:");
+		// 		foreach ((string version, string test) in unsuccessfulTests)
+		// 		{
+		// 			Logger.Info(LogCategory.General, $"\t{version,-12} {test}");
+		// 		}
+		// 	}
+		// }
+
+		private static void Rip(string[] inputPaths, string outputPath, string settingsPath)
 		{
-			if (!Directory.Exists(TestsDirectory))
-			{
-				Logger.Log(LogType.Warning, LogCategory.General, "Tests folder did not exist. Creating...");
-				Directory.CreateDirectory(TestsDirectory);
-				Logger.Info(LogCategory.General, "Created. Program will now exit.");
-				return;
-			}
-
-			Logger.Info(LogCategory.General, $"Running tests in {Path.GetFullPath(TestsDirectory)}");
-			Logger.BlankLine();
-
-			int numTests = 0;
-			int numSuccessful = 0;
-			List<(string, string)> successfulTests = new();
-			List<(string, string)> unsuccessfulTests = new();
-			foreach (string versionPath in Directory.GetDirectories(TestsDirectory))
-			{
-				string versionName = Path.GetRelativePath(TestsDirectory, versionPath);
-				foreach (string testPath in Directory.GetDirectories(versionPath))
-				{
-					string testName = Path.GetRelativePath(versionPath, testPath);
-					Logger.Info(LogCategory.General, $"Found test: '{testName}' for Unity version: '{versionName}'");
-					numTests++;
-					string inputPath = Path.Combine(testPath, "Input");
-					if (!Directory.Exists(inputPath))
-					{
-						Logger.Log(LogType.Error, LogCategory.General, $"No input folder for '{testName}' on Unity version '{versionName}'");
-						unsuccessfulTests.Add((versionName, testName));
-					}
-					else
-					{
-						try
-						{
-							string[] inputFiles = Directory.GetFiles(inputPath);
-							string[] inputDirectories = Directory.GetDirectories(inputPath);
-							string[] inputPaths = Combine(inputFiles, inputDirectories);
-							string outputPath = Path.Combine(testPath, "Output");
-							Rip(inputPaths, outputPath);
-							Logger.Info(LogCategory.General, $"Completed test: '{testName}' for Unity version: '{versionName}'");
-							Logger.BlankLine(2);
-							numSuccessful++;
-							successfulTests.Add((versionName, testName));
-						}
-						catch (Exception ex)
-						{
-							Logger.Log(LogType.Error, LogCategory.General, ex.ToString());
-							Logger.BlankLine(2);
-							unsuccessfulTests.Add((versionName, testName));
-						}
-					}
-				}
-			}
-
-			Logger.Info(LogCategory.General, $"{numSuccessful}/{numTests} tests successfully completed");
-			if (numSuccessful > 0)
-			{
-				Logger.Info(LogCategory.General, "Successful:");
-				foreach ((string version, string test) in successfulTests)
-				{
-					Logger.Info(LogCategory.General, $"\t{version,-12} {test}");
-				}
-			}
-			if (numSuccessful < numTests)
-			{
-				Logger.Info(LogCategory.General, "Unsuccessful:");
-				foreach ((string version, string test) in unsuccessfulTests)
-				{
-					Logger.Info(LogCategory.General, $"\t{version,-12} {test}");
-				}
-			}
-		}
-
-		private static void Rip(string[] inputPaths, string outputPath)
-		{
+			Logger.Clear();
+			Logger.Add(new ConsoleLogger(false));
 			LibraryConfiguration settings = new();
+			settings.LoadFromJsonPath(settingsPath);
 			settings.LogConfigurationValues();
 			ExportHandler exportHandler = new(settings);
 			GameData gameData = exportHandler.LoadAndProcess(inputPaths);
