@@ -24,10 +24,6 @@ public class EngineAssetsExporter : IAssetExporter
 		Cache = cache;
 	}
 
-	public EngineAssetsExporter(EngineResourceData resourceData) : this(new PredefinedAssetCache(resourceData))
-	{
-	}
-
 	public static EngineAssetsExporter CreateFromEmbeddedData(UnityVersion version) => CreateFromTpkFile(version, EngineAssetsTpk.GetStream());
 
 	public static EngineAssetsExporter CreateFromTpkFile(UnityVersion version, Stream stream)
@@ -67,12 +63,22 @@ public class EngineAssetsExporter : IAssetExporter
 
 	public static EngineAssetsExporter CreateFromJsonText(string json)
 	{
-		return new(EngineResourceData.FromJson(json));
+		return CreateFromResourceData(EngineResourceData.FromJson(json));
+	}
+
+	public static EngineAssetsExporter CreateFromResourceData(EngineResourceData resourceData)
+	{
+		return new(new PredefinedAssetCache(resourceData));
 	}
 
 	public bool TryCreateCollection(IUnityObjectBase asset, [NotNullWhen(true)] out IExportCollection? exportCollection)
 	{
-		if (!IsEngineFile(asset.Collection.Name))
+		if (IsEngineFile(asset.Collection.Name, out UnityGuid engineGuid))
+		{
+			exportCollection = new SingleRedirectExportCollection(asset, asset.PathID, engineGuid, AssetType.Internal);
+			return true;
+		}
+		else
 		{
 			if (asset is IMaterial material)
 			{
@@ -125,9 +131,20 @@ public class EngineAssetsExporter : IAssetExporter
 		return false;
 	}
 
-	private static bool IsEngineFile(string? fileName)
+	private static bool IsEngineFile(string? fileName, out UnityGuid guid)
 	{
-		return FilenameUtils.IsDefaultResource(fileName) || FilenameUtils.IsBuiltinExtra(fileName) || FilenameUtils.IsEngineGeneratedF(fileName);
+		if (FilenameUtils.IsDefaultResource(fileName))
+		{
+			guid = PredefinedAssetCache.EGUID;
+			return true;
+		}
+		else if (FilenameUtils.IsBuiltinExtra(fileName))
+		{
+			guid = PredefinedAssetCache.FGUID;
+			return true;
+		}
+		guid = default;
+		return false;
 	}
 
 	public AssetType ToExportType(IUnityObjectBase asset)

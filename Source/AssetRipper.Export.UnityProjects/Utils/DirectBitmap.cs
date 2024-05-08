@@ -1,4 +1,5 @@
 using AssetRipper.Export.UnityProjects.Configuration;
+using AssetRipper.TextureDecoder.Exr;
 using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using StbImageWriteSharp;
@@ -14,6 +15,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 	where TChannel : unmanaged
 	where TColor : unmanaged, IColor<TChannel>
 {
+	private static bool UseFastBmp => true;
 	private static readonly ImageWriter imageWriter = new();
 	public DirectBitmap(int width, int height, int depth = 1)
 	{
@@ -121,6 +123,9 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 			case ImageExportFormat.Bmp:
 				SaveAsBmp(stream);
 				break;
+			case ImageExportFormat.Exr:
+				ExrWriter.Write<TColor, TChannel>(stream, Width, Height * Depth, Pixels);
+				break;
 			case ImageExportFormat.Hdr:
 				SaveAsHdr(stream);
 				break;
@@ -140,7 +145,11 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 
 	public void SaveAsBmp(Stream stream)
 	{
-		if (OperatingSystem.IsWindows())
+		if (UseFastBmp)
+		{
+			BmpWriter.WriteBmp(Data, Width, Height * Depth, stream);
+		}
+		else if (OperatingSystem.IsWindows())
 		{
 			SaveUsingSystemDrawing(stream, ImageFormat.Bmp);
 		}
@@ -149,7 +158,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 			GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 			lock (imageWriter)
 			{
-				imageWriter.WriteBmp(data, Width, Height, components, stream);
+				imageWriter.WriteBmp(data, Width, Height * Depth, components, stream);
 			}
 		}
 	}
@@ -159,7 +168,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		lock (imageWriter)
 		{
-			imageWriter.WriteHdr(data, Width, Height, components, stream);
+			imageWriter.WriteHdr(data, Width, Height * Depth, components, stream);
 		}
 	}
 
@@ -174,7 +183,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 			GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 			lock (imageWriter)
 			{
-				imageWriter.WriteJpg(data, Width, Height, components, stream, default);
+				imageWriter.WriteJpg(data, Width, Height * Depth, components, stream, default);
 			}
 		}
 	}
@@ -190,7 +199,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 			GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 			lock (imageWriter)
 			{
-				imageWriter.WritePng(data, Width, Height, components, stream);
+				imageWriter.WritePng(data, Width, Height * Depth, components, stream);
 			}
 		}
 	}
@@ -200,7 +209,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		lock (imageWriter)
 		{
-			imageWriter.WriteTga(data, Width, Height, components, stream);
+			imageWriter.WriteTga(data, Width, Height * Depth, components, stream);
 		}
 	}
 
@@ -218,12 +227,12 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 		}
 		else if (TColor.HasAlphaChannel)
 		{
-			RgbConverter.Convert<TColor, TChannel, ColorRGBA<byte>, byte>(Bits, Width, Height, out data);
+			RgbConverter.Convert<TColor, TChannel, ColorRGBA<byte>, byte>(Bits, Width, Height * Depth, out data);
 			components = ColorComponents.RedGreenBlueAlpha;
 		}
 		else
 		{
-			RgbConverter.Convert<TColor, TChannel, ColorRGB<byte>, byte>(Bits, Width, Height, out data);
+			RgbConverter.Convert<TColor, TChannel, ColorRGB<byte>, byte>(Bits, Width, Height * Depth, out data);
 			components = ColorComponents.RedGreenBlue;
 		}
 	}
@@ -253,7 +262,7 @@ public readonly record struct DirectBitmap<TColor, TChannel>
 			}
 			else
 			{
-				RgbConverter.Convert<TColor, TChannel, ColorBGRA32, byte>(@this.Bits, @this.Width, @this.Height, out data);
+				RgbConverter.Convert<TColor, TChannel, ColorBGRA32, byte>(@this.Bits, @this.Width, @this.Height * @this.Depth, out data);
 				pixelSize = 4;
 				pixelFormat = PixelFormat.Format32bppArgb;
 			}

@@ -42,7 +42,13 @@ public sealed partial class SettingsPage : DefaultPage
 								{
 									WriteCheckBoxForIgnoreStreamingAssets(writer, Localization.SkipStreamingAssets);
 								}
+
+								using (new Div(writer).WithClass("col").End())
+								{
+									WriteCheckBoxForEnableStaticMeshSeparation(writer, Localization.EnableStaticMeshSeparation);
+								}
 							}
+
 							using (new Div(writer).WithClass("row").End())
 							{
 								using (new Div(writer).WithClass("col").End())
@@ -72,7 +78,26 @@ public sealed partial class SettingsPage : DefaultPage
 						{
 							new H3(writer).Close(Localization.Experimental);
 
-							WriteCheckBoxForEnablePrefabOutlining(writer, Localization.EnablePrefabOutlining);
+							using (new Div(writer).WithClass("row").End())
+							{
+								using (new Div(writer).WithClass("col").End())
+								{
+									WriteCheckBoxForEnablePrefabOutlining(writer, Localization.EnablePrefabOutlining);
+								}
+
+								using (new Div(writer).WithClass("col").End())
+								{
+									WriteCheckBoxForEnableAssetDeduplication(writer, Localization.EnableAssetDeduplication);
+								}
+							}
+
+							using (new Div(writer).WithClass("row").End())
+							{
+								using (new Div(writer).WithClass("col").End())
+								{
+									WriteTextAreaForTargetVersion(writer);
+								}
+							}
 						}
 					}
 
@@ -96,7 +121,7 @@ public sealed partial class SettingsPage : DefaultPage
 
 								using (new Div(writer).WithClass("col").End())
 								{
-									WriteDropDownForMeshExportFormat(writer);
+									WriteDropDownForLightmapTextureExportFormat(writer);
 								}
 							}
 
@@ -131,6 +156,21 @@ public sealed partial class SettingsPage : DefaultPage
 									WriteDropDownForScriptExportMode(writer);
 								}
 							}
+
+							using (new Div(writer).WithClass("row").End())
+							{
+								using (new Div(writer).WithClass("col").End())
+								{
+									WriteDropDownForMeshExportFormat(writer);
+								}
+								using (new Div(writer).WithClass("col").End())
+								{
+									WriteCheckBoxForSaveSettingsToDisk(writer, Localization.SaveSettingsToDisk);
+								}
+								using (new Div(writer).WithClass("col").End())
+								{
+								}
+							}
 						}
 					}
 
@@ -145,13 +185,25 @@ public sealed partial class SettingsPage : DefaultPage
 
 	private static void WriteTextAreaForDefaultVersion(TextWriter writer)
 	{
-		new Label(writer).WithClass("form-label").WithFor(nameof(Configuration.DefaultVersion)).Close(Localization.DefaultVersion);
+		new Label(writer).WithClass("form-label").WithFor(nameof(Configuration.ImportSettings.DefaultVersion)).Close(Localization.DefaultVersion);
 		new Input(writer)
 			.WithType("text")
 			.WithClass("form-control")
-			.WithId(nameof(Configuration.DefaultVersion))
-			.WithName(nameof(Configuration.DefaultVersion))
-			.WithValue(Configuration.DefaultVersion.ToString())
+			.WithId(nameof(Configuration.ImportSettings.DefaultVersion))
+			.WithName(nameof(Configuration.ImportSettings.DefaultVersion))
+			.WithValue(Configuration.ImportSettings.DefaultVersion.ToString())
+			.Close();
+	}
+
+	private static void WriteTextAreaForTargetVersion(TextWriter writer)
+	{
+		new Label(writer).WithClass("form-label").WithFor(nameof(Configuration.ImportSettings.TargetVersion)).Close(Localization.TargetVersionForVersionChanging);
+		new Input(writer)
+			.WithType("text")
+			.WithClass("form-control")
+			.WithId(nameof(Configuration.ImportSettings.TargetVersion))
+			.WithName(nameof(Configuration.ImportSettings.TargetVersion))
+			.WithValue(Configuration.ImportSettings.TargetVersion.ToString())
 			.Close();
 	}
 
@@ -231,6 +283,15 @@ public sealed partial class SettingsPage : DefaultPage
 		foreach ((string key, string? value) in form.Select(pair => (pair.Key, (string?)pair.Value)))
 		{
 			SetProperty(key, value);
+		}
+
+		if (Configuration.SaveSettingsToDisk)
+		{
+			Configuration.SaveToDefaultPath();
+		}
+		else
+		{
+			SerializedSettings.DeleteDefaultPath();
 		}
 
 		context.Response.Redirect("/Settings/Edit");

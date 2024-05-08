@@ -9,6 +9,11 @@ partial class Localization
 	public static string AnErrorOccuredDuringDecompilation => Get("an_error_occured_during_decompilation");
 	
 	/// <summary>
+	/// Thank you for supporting AssetRipper!
+	/// </summary>
+	public static string AppreciationMessage => Get("appreciation_message");
+	
+	/// <summary>
 	/// Assembly Name
 	/// </summary>
 	public static string AssemblyName => Get("assembly_name");
@@ -370,9 +375,19 @@ partial class Localization
 	public static string DonationMessage => Get("donation_message");
 	
 	/// <summary>
+	/// Enable Asset Deduplication
+	/// </summary>
+	public static string EnableAssetDeduplication => Get("enable_asset_deduplication");
+	
+	/// <summary>
 	/// Enable Prefab Outlining
 	/// </summary>
 	public static string EnablePrefabOutlining => Get("enable_prefab_outlining");
+	
+	/// <summary>
+	/// Enable Static Mesh Separation
+	/// </summary>
+	public static string EnableStaticMeshSeparation => Get("enable_static_mesh_separation");
 	
 	/// <summary>
 	/// Error
@@ -478,6 +493,16 @@ partial class Localization
 	/// Licenses
 	/// </summary>
 	public static string Licenses => Get("licenses");
+	
+	/// <summary>
+	/// Lightmap Texture Export Format
+	/// </summary>
+	public static string LightmapTextureExportTitle => Get("lightmap_texture_export_title");
+	
+	/// <summary>
+	/// This affects all exported lightmap textures.
+	/// </summary>
+	public static string LightmapTextureFormatDescription => Get("lightmap_texture_format_description");
 	
 	/// <summary>
 	/// Load
@@ -746,6 +771,11 @@ partial class Localization
 	public static string Save => Get("save");
 	
 	/// <summary>
+	/// Save Settings to Disk
+	/// </summary>
+	public static string SaveSettingsToDisk => Get("save_settings_to_disk");
+	
+	/// <summary>
 	/// Scene
 	/// </summary>
 	public static string Scene => Get("scene");
@@ -854,6 +884,16 @@ partial class Localization
 	/// C# Language Version
 	/// </summary>
 	public static string ScriptLanguageVersionTitle => Get("script_language_version_title");
+	
+	/// <summary>
+	/// Select File
+	/// </summary>
+	public static string SelectFile => Get("select_file");
+	
+	/// <summary>
+	/// Select Folder
+	/// </summary>
+	public static string SelectFolder => Get("select_folder");
 	
 	/// <summary>
 	/// Settings
@@ -966,6 +1006,11 @@ partial class Localization
 	public static string Success => Get("success");
 	
 	/// <summary>
+	/// Target Version For Version Changing
+	/// </summary>
+	public static string TargetVersionForVersionChanging => Get("target_version_for_version_changing");
+	
+	/// <summary>
 	/// Terrain Export Format
 	/// </summary>
 	public static string TerrainExportTitle => Get("terrain_export_title");
@@ -1059,6 +1104,11 @@ partial class Localization
 	/// View Loaded Files
 	/// </summary>
 	public static string ViewLoadedFiles => Get("view_loaded_files");
+	
+	/// <summary>
+	/// Warning: this directory is not empty. All content will be deleted.
+	/// </summary>
+	public static string WarningThisDirectoryIsNotEmptyAllContentWillBeDeleted => Get("warning_this_directory_is_not_empty_all_content_will_be_deleted");
 	
 	/// <summary>
 	/// Welcome

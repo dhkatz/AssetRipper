@@ -2,6 +2,7 @@
 using AssetRipper.Assets.Bundles;
 using AssetRipper.Assets.Cloning;
 using AssetRipper.Assets.Metadata;
+using AssetRipper.IO.Files.Utils;
 using AssetRipper.SourceGenerated.Classes.ClassID_213;
 using AssetRipper.SourceGenerated.Classes.ClassID_28;
 using AssetRipper.SourceGenerated.Classes.ClassID_687078895;
@@ -19,7 +20,10 @@ namespace AssetRipper.Processing.Textures
 		public void Process(GameData gameData)
 		{
 			ObjectFactory factory = new ObjectFactory(gameData);
-			foreach (IUnityObjectBase asset in gameData.GameBundle.FetchAssets())
+			foreach (IUnityObjectBase asset in gameData.GameBundle
+				.FetchAssetCollections()
+				.Where(c => !FilenameUtils.IsDefaultResourceOrBuiltinExtra(c.Name))
+				.SelectMany(c => c))
 			{
 				if (asset is ITexture2D texture)
 				{
@@ -79,7 +83,7 @@ namespace AssetRipper.Processing.Textures
 			// Otherwise, if a SpriteAtlas reference is serialized into this sprite,
 			// we must recover the m_RD field of the sprite from the SpriteAtlas.
 			ISpriteAtlas? atlas = sprite.SpriteAtlasP;
-			if (atlas is not null && sprite.Has_SpriteAtlas())
+			if (atlas is not null)
 			{
 				if (sprite.Has_RenderDataKey() &&
 					atlas.RenderDataMap.TryGetValue(sprite.RenderDataKey, out ISpriteAtlasData? spriteData))

@@ -5,9 +5,12 @@ namespace AssetRipper.GUI.Web.Pages;
 
 public static class Commands
 {
+	private const string RootPath = "/";
+	private const string CommandsPath = "/Commands";
+
 	public readonly struct LoadFile : ICommand
 	{
-		static async Task ICommand.Start(HttpRequest request)
+		static async Task<string?> ICommand.Execute(HttpRequest request)
 		{
 			IFormCollection form = await request.ReadFormAsync();
 
@@ -16,21 +19,26 @@ public static class Commands
 			{
 				paths = values;
 			}
-			else
+			else if (Dialogs.Supported)
 			{
 				Dialogs.OpenFiles.GetUserInput(out paths);
+			}
+			else
+			{
+				return CommandsPath;
 			}
 
 			if (paths is { Length: > 0 })
 			{
 				GameFileLoader.LoadAndProcess(paths);
 			}
+			return null;
 		}
 	}
 
 	public readonly struct LoadFolder : ICommand
 	{
-		static async Task ICommand.Start(HttpRequest request)
+		static async Task<string?> ICommand.Execute(HttpRequest request)
 		{
 			IFormCollection form = await request.ReadFormAsync();
 
@@ -39,21 +47,26 @@ public static class Commands
 			{
 				path = values;
 			}
-			else
+			else if (Dialogs.Supported)
 			{
 				Dialogs.OpenFolder.GetUserInput(out path);
+			}
+			else
+			{
+				return CommandsPath;
 			}
 
 			if (!string.IsNullOrEmpty(path))
 			{
 				GameFileLoader.LoadAndProcess([path]);
 			}
+			return null;
 		}
 	}
 
 	public readonly struct Export : ICommand
 	{
-		static async Task ICommand.Start(HttpRequest request)
+		static async Task<string?> ICommand.Execute(HttpRequest request)
 		{
 			IFormCollection form = await request.ReadFormAsync();
 
@@ -64,28 +77,29 @@ public static class Commands
 			}
 			else
 			{
-				Dialogs.OpenFolder.GetUserInput(out path);
+				return CommandsPath;
 			}
 
 			if (!string.IsNullOrEmpty(path))
 			{
 				GameFileLoader.Export(path);
 			}
+			return null;
 		}
 	}
 
 	public readonly struct Reset : ICommand
 	{
-		static Task ICommand.Start(HttpRequest request)
+		static Task<string?> ICommand.Execute(HttpRequest request)
 		{
 			GameFileLoader.Reset();
-			return Task.CompletedTask;
+			return Task.FromResult<string?>(null);
 		}
 	}
 
-	public static Task HandleCommand<T>(HttpContext context) where T : ICommand
+	public static async Task HandleCommand<T>(HttpContext context) where T : ICommand
 	{
-		context.Response.Redirect(T.RedirectionTarget);
-		return T.Start(context.Request);
+		string? redirectionTarget = await T.Execute(context.Request);
+		context.Response.Redirect(redirectionTarget ?? RootPath);
 	}
 }
