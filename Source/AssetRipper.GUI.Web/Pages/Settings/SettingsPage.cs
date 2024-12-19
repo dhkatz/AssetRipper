@@ -43,9 +43,16 @@ public sealed partial class SettingsPage : DefaultPage
 									WriteCheckBoxForIgnoreStreamingAssets(writer, Localization.SkipStreamingAssets);
 								}
 
-								using (new Div(writer).WithClass("col").End())
+								if (GameFileLoader.Premium)
 								{
-									WriteCheckBoxForEnableStaticMeshSeparation(writer, Localization.EnableStaticMeshSeparation);
+									using (new Div(writer).WithClass("col").End())
+									{
+										WriteCheckBoxForEnableStaticMeshSeparation(writer, Localization.EnableStaticMeshSeparation);
+									}
+								}
+								else
+								{
+									//Todo: add disabled checkbox
 								}
 							}
 
@@ -85,9 +92,16 @@ public sealed partial class SettingsPage : DefaultPage
 									WriteCheckBoxForEnablePrefabOutlining(writer, Localization.EnablePrefabOutlining);
 								}
 
-								using (new Div(writer).WithClass("col").End())
+								if (GameFileLoader.Premium)
 								{
-									WriteCheckBoxForEnableAssetDeduplication(writer, Localization.EnableAssetDeduplication);
+									using (new Div(writer).WithClass("col").End())
+									{
+										WriteCheckBoxForEnableAssetDeduplication(writer, Localization.EnableAssetDeduplication);
+									}
+								}
+								else
+								{
+									//Todo: add disabled checkbox
 								}
 							}
 
@@ -133,7 +147,7 @@ public sealed partial class SettingsPage : DefaultPage
 								}
 								using (new Div(writer).WithClass("col").End())
 								{
-									WriteDropDownForTerrainExportMode(writer);
+									WriteDropDownForShaderExportMode(writer);
 								}
 								using (new Div(writer).WithClass("col").End())
 								{
@@ -145,15 +159,14 @@ public sealed partial class SettingsPage : DefaultPage
 							{
 								using (new Div(writer).WithClass("col").End())
 								{
-									WriteDropDownForShaderExportMode(writer);
-								}
-								using (new Div(writer).WithClass("col").End())
-								{
 									WriteDropDownForScriptLanguageVersion(writer);
 								}
 								using (new Div(writer).WithClass("col").End())
 								{
 									WriteDropDownForScriptExportMode(writer);
+								}
+								using (new Div(writer).WithClass("col").End())
+								{
 								}
 							}
 
@@ -161,7 +174,6 @@ public sealed partial class SettingsPage : DefaultPage
 							{
 								using (new Div(writer).WithClass("col").End())
 								{
-									WriteDropDownForMeshExportFormat(writer);
 								}
 								using (new Div(writer).WithClass("col").End())
 								{

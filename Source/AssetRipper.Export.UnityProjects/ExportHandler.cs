@@ -6,7 +6,6 @@ using AssetRipper.Export.UnityProjects.Scripts;
 using AssetRipper.Import.Configuration;
 using AssetRipper.Import.Logging;
 using AssetRipper.Import.Structure;
-using AssetRipper.IO.Files;
 using AssetRipper.IO.Files.SerializedFiles;
 using AssetRipper.Processing;
 using AssetRipper.Processing.AnimatorControllers;
@@ -65,7 +64,7 @@ public class ExportHandler
 		yield return new MainAssetProcessor();
 		yield return new AnimatorControllerProcessor();
 		yield return new AudioMixerProcessor();
-		yield return new EditorFormatProcessor(Settings.ImportSettings.BundledAssetsExportMode);
+		yield return new EditorFormatProcessor(Settings.ProcessingSettings.BundledAssetsExportMode);
 		//Static mesh separation goes here
 		if (Settings.ProcessingSettings.EnablePrefabOutlining)
 		{
@@ -89,13 +88,13 @@ public class ExportHandler
 		ProjectExporter projectExporter = new(Settings, gameData.AssemblyManager);
 		BeforeExport(projectExporter);
 		projectExporter.DoFinalOverrides(Settings);
-		projectExporter.Export(gameData.GameBundle, Settings);
+		projectExporter.Export(gameData.GameBundle, Settings, LocalFileSystem.Instance);
 
 		Logger.Info(LogCategory.Export, "Finished exporting assets");
 
 		foreach (IPostExporter postExporter in GetPostExporters())
 		{
-			postExporter.DoPostExport(gameData, Settings);
+			postExporter.DoPostExport(gameData, Settings, LocalFileSystem.Instance);
 		}
 		Logger.Info(LogCategory.Export, "Finished post-export");
 

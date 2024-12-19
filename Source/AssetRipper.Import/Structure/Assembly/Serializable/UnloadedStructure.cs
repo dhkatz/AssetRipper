@@ -1,6 +1,5 @@
 ﻿using AssetRipper.Assets;
 using AssetRipper.Assets.Cloning;
-using AssetRipper.Assets.Export;
 using AssetRipper.Assets.Generics;
 using AssetRipper.Assets.IO.Writing;
 using AssetRipper.Assets.Metadata;
@@ -9,7 +8,6 @@ using AssetRipper.Import.Logging;
 using AssetRipper.Import.Structure.Assembly.Managers;
 using AssetRipper.IO.Endian;
 using AssetRipper.SourceGenerated.Classes.ClassID_114;
-using AssetRipper.Yaml;
 
 namespace AssetRipper.Import.Structure.Assembly.Serializable;
 
@@ -19,6 +17,14 @@ namespace AssetRipper.Import.Structure.Assembly.Serializable;
 /// </summary>
 public sealed class UnloadedStructure : UnityAssetBase
 {
+	private sealed class StatelessAsset : UnityAssetBase
+	{
+		public static StatelessAsset Instance { get; } = new();
+		private StatelessAsset()
+		{
+		}
+	}
+
 	/// <summary>
 	/// The <see cref="IMonoBehaviour"/> that <see langword="this"/> is the <see cref="IMonoBehaviour.Structure"/> for.
 	/// </summary>
@@ -74,15 +80,20 @@ public sealed class UnloadedStructure : UnityAssetBase
 
 	public override int SerializedVersion => LoadStructure()?.SerializedVersion ?? base.SerializedVersion;
 
-	public override YamlMappingNode ExportYamlEditor(IExportContainer container) => LoadStructure()?.ExportYamlEditor(container) ?? new();
+	public override void WalkEditor(AssetWalker walker)
+	{
+		((UnityAssetBase?)LoadStructure() ?? StatelessAsset.Instance).WalkEditor(walker);
+	}
 
-	public override YamlMappingNode ExportYamlRelease(IExportContainer container) => LoadStructure()?.ExportYamlRelease(container) ?? new();
+	public override void WalkRelease(AssetWalker walker)
+	{
+		((UnityAssetBase?)LoadStructure() ?? StatelessAsset.Instance).WalkRelease(walker);
+	}
 
-	public override void WalkEditor(AssetWalker walker) => LoadStructure()?.WalkEditor(walker);
-
-	public override void WalkRelease(AssetWalker walker) => LoadStructure()?.WalkRelease(walker);
-
-	public override void WalkStandard(AssetWalker walker) => LoadStructure()?.WalkStandard(walker);
+	public override void WalkStandard(AssetWalker walker)
+	{
+		((UnityAssetBase?)LoadStructure() ?? StatelessAsset.Instance).WalkStandard(walker);
+	}
 
 	public override IEnumerable<(string, PPtr)> FetchDependencies()
 	{

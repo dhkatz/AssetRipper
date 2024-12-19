@@ -64,7 +64,7 @@
     "collections": "Colecciones",
     "commands": "Comandos",
     "config_options": "Opciones de configuración",
-    "config_screen_drag_drop_prompt": "Por favor, ten en cuenta que algunos cambios de configuración pueden causar o evitar errores.\nUna vez que estés listo, arrastra y suelta tu archivo/carpeta del juego en esta ventana, o utiliza el menú de la parte superior izquierda para seleccionar algo manualmente."
+    "config_screen_drag_drop_prompt": "Por favor, ten en cuenta que algunos cambios de configuración pueden causar o evitar errores.\nUna vez que estés listo, arrastra y suelta tu archivo/carpeta del juego en esta ventana, o utiliza el menú de la parte superior izquierda para seleccionar algo manualmente.",
     "configuration_files": "Archivos de configuración",
     "configuration_files_lists": "Listas",
     "configuration_files_singletons": "Singletons",
@@ -76,7 +76,7 @@
     "enable_prefab_outlining": "Habilitar Prefab Outlining",
     "error": "Error",
     "error_exporting_with_reason": "Error al exportar el contenido del juego: {0}",
-    "error_importing_with_reason": " Error al cargar el contenido del juego: {0}",
+    "error_importing_with_reason": "Error al cargar el contenido del juego: {0}",
     "experimental": "Experimental",
     "export_complete": "¡Exportación terminada!",
     "export_deleting_old_files": "Borrando archivos existentes...",
@@ -94,7 +94,7 @@
     "json": "Json",
     "length": "Longitud",
     "licenses": "Licencias",
-    "load": "Cargar"
+    "load": "Cargar",
     "loading_game_content_from": "Cargando contenido del juego desde {0}\n{1}",
     "loading_step_begin_scheme_processing": "Iniciando procesamiento de esquema",
     "loading_step_create_file_collection": "Creando colección de archivos",
@@ -215,5 +215,13 @@
     "warning_this_directory_is_not_empty_all_content_will_be_deleted": "Advertencia: este directorio no está vacío. Se eliminará todo el contenido",
     "welcome": "Bienvenido",
     "width": "Ancho",
-    "yaml": "Yaml"
+    "yaml": "Yaml",
+    "size": "Tamaño",
+    "asset_tab_model": "Modelo",
+    "enable_asset_deduplication": "Activar deduplicación de Assets",
+    "lightmap_texture_export_title": "Formato de exportación para texturas Lightmap",
+    "lightmap_texture_format_description": "Esto afectará a todas las texturas lightmap exportadas.",
+    "save_settings_to_disk": "Guardar configuración en el disco",
+    "export_primary_content": "Exportar contenido principal",
+    "export_unity_project": "Exportar proyecto de Unity"
 }
