@@ -33,11 +33,17 @@ static class Program
 		Logger.Clear();
 		Logger.Add(new ConsoleLogger(false));
 
-		LibraryConfiguration settings = new();
-		settings.LoadFromJsonPath(settingsPath);
-		settings.LogConfigurationValues();
+		SerializedSettings settings = SerializedSettings.Load(settingsPath);
 
-		ExportHandler exportHandler = new(settings);
+		LibraryConfiguration configuration = new()
+		{
+			ImportSettings = settings.Import,
+			ProcessingSettings = settings.Processing,
+			ExportSettings = settings.Export,
+		};
+		configuration.LogConfigurationValues();
+
+		ExportHandler exportHandler = new(configuration);
 		GameData gameData = exportHandler.LoadAndProcess(inputPaths);
 		PrepareExportDirectory(outputPath);
 		exportHandler.Export(gameData, outputPath);
